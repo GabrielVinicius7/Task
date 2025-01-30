@@ -15,7 +15,7 @@ class Login extends StatelessWidget {
               children: [
                 Title(
                   color: Colors.black,
-                  child: const Text('Celta',
+                  child: const Text('Suporte',
                       style: TextStyle(
                         fontSize: 50,
                         fontWeight: FontWeight.bold,
@@ -25,8 +25,8 @@ class Login extends StatelessWidget {
                 Container(
                     height: 500,
                     width: 350,
-                    decoration:BoxDecoration(
-                      color:const Color.fromARGB(0, 227, 227, 227),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(0, 227, 227, 227),
                       borderRadius: BorderRadius.circular(40.0),
                     ),
                     padding: const EdgeInsets.all(20),
@@ -46,6 +46,7 @@ class Login extends StatelessWidget {
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.password),
                         ),
+                        obscureText: true,
                       ),
                       const SizedBox(height: 30),
                       TextButton(
