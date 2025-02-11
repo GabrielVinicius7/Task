@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ApiRequest {
-  static const String host = "http://10.0.0.6:8080/";
+  static const String host = "http://192.168.3.37:8080/";
   static String _token = "";
 
   static void setToken(String newToke) {
