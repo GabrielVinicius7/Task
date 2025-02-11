@@ -20,10 +20,10 @@ Drawer customdrawer(context) {
           ),
            ListTile(
             onTap:(){
-              Navigator.pushNamed(context,"/");
+              Navigator.pushNamed(context,"/config");
             }, 
             leading:const Icon(Icons.settings),
-            title:const Text('Confirações'),
+            title:const Text('Configurações'),
           )
           ],
         ),

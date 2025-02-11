@@ -1,10 +1,17 @@
+import 'package:erpecommerce/shared/http_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var username = TextEditingController();
+    var email = TextEditingController();
+    var password = TextEditingController();
+    var role = "ADMIN";
+    var password1 = TextEditingController();
     return Scaffold(
         appBar: AppBar(),
         body: SingleChildScrollView(
@@ -31,42 +38,68 @@ class Register extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   child: Column(children: [
                     const SizedBox(height: 40.0),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      decoration: const InputDecoration(
                         labelText: 'Username',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.person),
                       ),
+                      controller: username,
                     ),
                     const SizedBox(height: 30.0),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      decoration: const InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.email),
                       ),
+                      controller: email,
                     ),
                     const SizedBox(height: 30.0),
-                    const TextField(
-                      decoration: InputDecoration(
+                     TextField(
+                      decoration:const InputDecoration(
                         labelText: 'Password',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.password),
                       ),
                       obscureText: true,
+                      controller: password1,
                     ),
                     const SizedBox(height: 30.0),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      decoration: const InputDecoration(
                         labelText: 'Repeat the Password',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.password),
                       ),
                       obscureText: true,
+                      controller: password,
                     ),
                     const SizedBox(height: 30),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        var response = await ApiRequest.post(
+                            endpoint: "auth/register",
+                            body: {
+                              "email": email.text,
+                              "username": username.text,
+                              "password": password.text,
+                              "role": role,
+                            });
+                        if (response.statusCode != 201) {
+                          Fluttertoast.showToast(
+                              msg: "Não foi possivel cadastrar");
+                          return;
+                        }
+                        email.clear();
+                        username.clear();
+                        password.clear();
+                        password1.clear();
+                        Fluttertoast.showToast(
+                            msg: "Conta cadastrada com sucesso");
+                      },
+
+                      
                       style: const ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.black),

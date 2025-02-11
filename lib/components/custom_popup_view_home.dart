@@ -19,7 +19,7 @@ AlertDialog customPopUp(context, index) {
           ),
           const SizedBox(height:10),
           Text(
-            "${ligacoes[index].empresa}  /  ${ligacoes[index].nome}",
+            "${ligacoes[index - 1].empresa}  /  ${ligacoes[index - 1].nome}",
           ),
           const SizedBox(height:20),
           const Text(

@@ -1,13 +1,12 @@
-import 'package:erpecommerce/shared/http_teste.dart';
 import 'package:erpecommerce/views/auth/login.dart';
 import 'package:erpecommerce/views/auth/register.dart';
+import 'package:erpecommerce/views/dashboard/config.dart';
 import 'package:erpecommerce/views/dashboard/home.dart';
 import 'package:erpecommerce/views/dashboard/notespage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
-  test_http();
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +29,7 @@ class MyApp extends StatelessWidget {
         //
         // Notice that the counter didn't reset back to zero; the application
         // state is not lost during the reload. To reset the state, use hot
-        // 
+        //
         //restart instead.
         //
         // This works for code too, not just values: Most code changes can be
@@ -44,6 +43,7 @@ class MyApp extends StatelessWidget {
         "/register": (context) => const Register(),
         "/home": (context) => const Home(),
         "/notespage": (context) => const NotesPage(),
+        "/config": (context) => const Config(),
       },
     );
   }
