@@ -1,6 +1,6 @@
 # Task
 
-A Flutter application to manage tasks efficiently and effectively.   ![Logo do GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png)
+A Flutter application to manage tasks efficiently and effectively.   ![Logo do GitHub](https://w7.pngwing.com/pngs/537/866/png-transparent-flutter-hd-logo.png)
 
 ## Overview
 
