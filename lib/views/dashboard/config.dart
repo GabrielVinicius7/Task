@@ -83,7 +83,7 @@ class Config extends StatelessWidget {
                           GestureDetector(
                             onTap: () => showDialog(
                               context: context,
-                              builder: (_) => customDialog(context),
+                              builder: (_) => oldPassawor(context),
                             ),
                             child: const CircleAvatar(
                               radius: 14, // Define o tamanho do botão

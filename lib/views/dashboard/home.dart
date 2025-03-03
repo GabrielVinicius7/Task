@@ -2,42 +2,42 @@ import 'dart:convert';
 import 'package:erpecommerce/components/custom_drawer.dart';
 import 'package:erpecommerce/components/custom_popup_home.dart';
 import 'package:erpecommerce/components/custom_popup_view_home.dart';
-import 'package:erpecommerce/shared/entities/api_response_entity.dart';
 import 'package:erpecommerce/shared/http_service.dart';
 import 'package:erpecommerce/views/dashboard/entities/call.dart';
 import 'package:flutter/material.dart';
 
+// Tela principal do aplicativo
 class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState(); // Nome corrigido
+  State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  List<Call> _calls = []; // Nome corrigido
-  bool _isLoading = true;
-  String? _errorMessage;
+  List<Call> _calls = []; // Lista para armazenar as chamadas recuperadas do servidor
+  bool _isLoading = true; // Indica se os dados ainda estão sendo carregados
+  String? _errorMessage; // Armazena mensagens de erro em caso de falha na requisição
 
   @override
   void initState() {
     super.initState();
-    _fetchCalls();
+    _fetchCalls(); // Carrega os dados ao iniciar a tela
   }
 
+  // Método responsável por buscar as chamadas no servidor
   Future<void> _fetchCalls() async {
     try {
-      var response = await ApiRequest.get(endpoint: "api/call/"); // Await único
+      var response = await ApiRequest.get(endpoint: "api/call"); // Faz requisição GET para obter os dados
+      print("Resposta do servidor: ${response.body}");
 
       if (!mounted) return;
 
       if (response.statusCode == 200) {
-        String decodedBody = utf8.decode(response.bodyBytes);
-        final ApiResponseEntity body =
-            ApiResponseEntity.fromJson(jsonDecode(decodedBody));
-        if (!body.success) return;
-        final List<Call> calls =
-            body.data.map((e) => Call.fromJson(e)).toList();
+        // Decodifica a resposta para lidar com caracteres especiais
+        String decodedBody = utf8.decode(response.bodyBytes, allowMalformed: true);
+        final List<dynamic> jsonList = jsonDecode(decodedBody);
+        final List<Call> calls = jsonList.map((json) => Call.fromJson(json)).toList();
 
         if (!mounted) return;
         setState(() {
@@ -45,6 +45,7 @@ class _HomeState extends State<Home> {
           _isLoading = false;
         });
       } else {
+        // Caso a resposta não seja bem-sucedida, define a mensagem de erro
         if (!mounted) return;
         setState(() {
           _isLoading = false;
@@ -52,6 +53,7 @@ class _HomeState extends State<Home> {
         });
       }
     } catch (e) {
+      // Captura erros de conexão e define uma mensagem de erro
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -63,89 +65,106 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: customdrawer(context),
+      drawer: customdrawer(context), // Menu lateral
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Row(
-          children: [
-            SizedBox(width: 25),
-            Text(
-              'Histórico de Ligações',
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
+        title: const Text(
+          'Histórico de Ligações',
+          style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
       ),
-      body: _buildBody(), // Método separado para organização
+      body: _buildBody(), // Chama a função que constrói o corpo da tela
     );
   }
 
+  // Constrói o corpo da tela
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Stack(
+        children: [
+          Center(child: CircularProgressIndicator()), // Indicador de carregamento
+          _buildFloatingButton(), // Botão para adicionar nova chamada
+        ],
+      );
     }
 
     if (_errorMessage != null) {
-      return Center(child: Text(_errorMessage!));
+      return Stack(
+        children: [
+          Center(child: Text(_errorMessage!)), // Exibe a mensagem de erro
+          _buildFloatingButton(), // Botão para adicionar nova chamada
+        ],
+      );
     }
 
     if (_calls.isEmpty) {
-      return const Center(child: Text('Nenhuma ligação registrada'));
+      return Stack(
+        children: [
+          const Center(child: Text('Nenhuma ligação registrada')), // Mensagem caso não haja chamadas
+          _buildFloatingButton(), // Botão para adicionar nova chamada
+        ],
+      );
     }
 
     return Stack(
       children: [
         ListView.separated(
-          itemCount: _calls.length, // Use _calls ao invés de ligacoes
+          itemCount: _calls.length,
           separatorBuilder: (context, index) => const SizedBox(height: 10),
           itemBuilder: (context, index) {
             final call = _calls[index];
-            return _buildCallItem(call, index);
+            return _buildCallItem(call);
           },
         ),
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: FloatingActionButton(
-            backgroundColor: Colors.black,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => customDialog(context),
-              ).then((_) => _fetchCalls());
-            },
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
-        ),
+        _buildFloatingButton(), // Botão para adicionar nova chamada
       ],
     );
   }
 
-  Widget _buildCallItem(Call call, int index) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 7),
-      height: 120,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-        color: Colors.white,
-        border: Border.all(
-          color: const Color.fromARGB(255, 197, 189, 189),
-          width: 1.0,
-        ),
-        borderRadius: BorderRadius.circular(10),
+  // Constrói o botão flutuante para adicionar uma nova chamada
+  Widget _buildFloatingButton() {
+    return Positioned(
+      bottom: 16,
+      right: 16,
+      child: FloatingActionButton(
+        backgroundColor: Colors.black,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => CustomDialog(context),
+          ).then((_) => _fetchCalls()); // Atualiza a lista após o cadastro
+        },
+        child: const Icon(Icons.add, color: Colors.white),
       ),
-      child: GestureDetector(
-        onTap: () => showDialog(
-          context: context,
-          builder: (_) => customPopUp(context, index),
+    );
+  }
+
+  // Constrói um item da lista de chamadas
+  Widget _buildCallItem(Call call) {
+    return GestureDetector(
+      onTap: () => showDialog(
+        context: context,
+        builder: (_) => CallHistoryPopup(call: call), // Exibe detalhes da chamada ao tocar
+      ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 7),
+        height: 120,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          color: Colors.white,
+          border: Border.all(
+            color: const Color.fromARGB(255, 197, 189, 189),
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -154,27 +173,8 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${call.company}  /  ${call.name}",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        call.date, // Exibe apenas a data
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      // Text(
-                      //   call.date.split(' ')[1], // Exibe apenas a hora
-                      //   style: const TextStyle(fontSize: 16),
-                      // ),
-                    ],
-                  )
+                  Text("${call.company} / ${call.name}", style: const TextStyle(fontSize: 16)),
+                  Text(call.date.showDateFormatted(), style: const TextStyle(fontSize: 16)),
                 ],
               ),
               const Spacer(),
@@ -184,15 +184,8 @@ class _HomeState extends State<Home> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          call.problem,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          call.solution,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        Text(call.problem, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
+                        Text(call.solution, overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -200,8 +193,8 @@ class _HomeState extends State<Home> {
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () => showDialog(
                       context: context,
-                      builder: (_) => customDialog(context),
-                    ),
+                      builder: (_) => CustomDialog(context, call: call),
+                    ).then((_) => _fetchCalls()),
                   ),
                 ],
               ),

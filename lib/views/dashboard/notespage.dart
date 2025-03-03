@@ -1,193 +1,221 @@
+import 'dart:convert';
+import 'package:erpecommerce/components/custom_drawer.dart';
 import 'package:erpecommerce/components/custom_popup_notespage.dart';
 import 'package:erpecommerce/components/custom_popup_view_notespage.dart';
-import 'package:erpecommerce/shared/mock_notespage.dart';
+import 'package:erpecommerce/shared/http_service.dart';
+import 'package:erpecommerce/views/dashboard/entities/note.dart';
 import 'package:flutter/material.dart';
 
-class NotesPage extends StatelessWidget {
+// Tela principal do aplicativo
+class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    Lembre getters = Lembre();
-    List<Lembrete> lembretes = getters.pegarlembre();
+  State<NotesPage> createState() => _HomeState();
+}
 
+class _HomeState extends State<NotesPage> {
+  List<Call> _calls =
+      []; // Lista para armazenar as chamadas recuperadas do servidor
+  bool _isLoading = true; // Indica se os dados ainda estão sendo carregados
+  String?
+      _errorMessage; // Armazena mensagens de erro em caso de falha na requisição
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCalls(); // Carrega os dados ao iniciar a tela
+  }
+
+  // Método responsável por buscar as chamadas no servidor
+  Future<void> _fetchCalls() async {
+    try {
+      var response = await ApiRequest.get(
+          endpoint: "api/note"); // Faz requisição GET para obter os dados
+      print("Resposta do servidor: ${response.body}");
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        // Decodifica a resposta para lidar com caracteres especiais
+        String decodedBody =
+            utf8.decode(response.bodyBytes, allowMalformed: true);
+        final List<dynamic> jsonList = jsonDecode(decodedBody);
+        final List<Call> calls =
+            jsonList.map((json) => Call.fromJson(json)).toList();
+
+        if (!mounted) return;
+        setState(() {
+          _calls = calls;
+          _isLoading = false;
+        });
+      } else {
+        // Caso a resposta não seja bem-sucedida, define a mensagem de erro
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+          _errorMessage = "Erro ao carregar dados: ${response.statusCode}";
+        });
+      }
+    } catch (e) {
+      // Captura erros de conexão e define uma mensagem de erro
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = "Falha na conexão. Verifique sua internet.";
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      drawer: customdrawer(context), // Menu lateral
       appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Anotações',
-              style: TextStyle(color: Colors.black),
-            ),
-            SizedBox(width: 50)
-          ],
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text(
+          'Anotações',
+          style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
       ),
-      body: Stack(
+      body: _buildBody(), // Chama a função que constrói o corpo da tela
+    );
+  }
+
+  // Constrói o corpo da tela
+  Widget _buildBody() {
+    if (_isLoading) {
+      return Stack(
         children: [
-          ListView.separated(
-            itemCount: lembretes.length,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 7),
-                height: 120,
-                width: 200,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                  color: Colors.white,
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 197, 189, 189),
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) => customPopUp(context, index));
-                  },
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            children: [
-                              const SizedBox(height: 2),
-                              Text(
-                                lembretes[index].titulo,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Column(
-                            children: [
-                              Text(
-                                "Data",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(width: 50),
-                          SizedBox(
-                            width: 150,
-                            child: Text(
-                              lembretes[index].situacao,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 7),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(width: 50),
-                          Column(
-                            children: [
-                              SizedBox(
-                                  width: 150,
-                                  child: Text(
-                                    lembretes[index].empresa,
-                                    style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )),
-                              SizedBox(
-                                  width: 150,
-                                  child: Text(
-                                    lembretes[index].contato,
-                                    style: const TextStyle(
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ))
-                            ],
-                          ),
-                          const SizedBox(width: 90),
-                          const SizedBox(height: 25),
-                          Positioned(
-                            bottom: 25,
-                            right: 25,
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Color.fromARGB(0, 0, 0, 0),
-                                shape: BoxShape.circle,
-                              ),
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => customDialog(context));
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const SizedBox(height: 10);
-            },
-          ),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.black,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => customDialog(context),
-                  );
-                },
-              ),
-            ),
-          ),
+          Center(
+              child: CircularProgressIndicator()), // Indicador de carregamento
+          _buildFloatingButton(), // Botão para adicionar nova chamada
         ],
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Stack(
+        children: [
+          Center(child: Text(_errorMessage!)), // Exibe a mensagem de erro
+          _buildFloatingButton(), // Botão para adicionar nova chamada
+        ],
+      );
+    }
+
+    if (_calls.isEmpty) {
+      return Stack(
+        children: [
+          const Center(
+              child: Text(
+                  'Nenhuma anotação registrada')), // Mensagem caso não haja chamadas
+          _buildFloatingButton(), // Botão para adicionar nova chamada
+        ],
+      );
+    }
+
+    return Stack(
+      children: [
+        ListView.separated(
+          itemCount: _calls.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
+          itemBuilder: (context, index) {
+            final call = _calls[index];
+            return _buildCallItem(call);
+          },
+        ),
+        _buildFloatingButton(), // Botão para adicionar nova chamada
+      ],
+    );
+  }
+
+  // Constrói o botão flutuante para adicionar uma nova chamada
+  Widget _buildFloatingButton() {
+    return Positioned(
+      bottom: 16,
+      right: 16,
+      child: FloatingActionButton(
+        backgroundColor: Colors.black,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) =>
+                const CustomDialogNotes(), // Removido o parâmetro context
+          ).then((_) => _fetchCalls()); // Atualiza a lista após o cadastro
+        },
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  // Constrói um item da lista de chamadas
+  Widget _buildCallItem(Call call) {
+    return GestureDetector(
+      onTap: () => showDialog(
+        context: context,
+        builder: (_) =>
+            CallHistoryPopup(call: call), // Exibe detalhes da chamada ao tocar
+      ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 7),
+        height: 120,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          color: Colors.white,
+          border: Border.all(
+            color: const Color.fromARGB(255, 197, 189, 189),
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("${call.title} / ${call.company}",
+                      style: const TextStyle(fontSize: 16)),
+                  Text(call.date.showDateFormatted(),
+                      style: const TextStyle(fontSize: 16)),
+                ],
+              ),
+              const Spacer(),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(call.contact,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 16)),
+                        Text(call.situation, overflow: TextOverflow.ellipsis),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.black),
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (_) => CustomDialogNotes(
+                          call: call), // Removido o parâmetro context
+                    ).then((_) => _fetchCalls()),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

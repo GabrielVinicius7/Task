@@ -3,7 +3,7 @@ import 'custom_drawer_config_newpass.dart';
 
 TextEditingController senhaAtual = TextEditingController();
 
-AlertDialog customDialog(context) {
+AlertDialog oldPassawor(context) {
   return AlertDialog(
     content: SingleChildScrollView(
       child: Column(

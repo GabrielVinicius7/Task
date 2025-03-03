@@ -5,7 +5,6 @@ import 'package:erpecommerce/views/auth/login_token.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 class Login extends StatelessWidget {
   const Login({super.key});
 
@@ -60,46 +59,55 @@ class Login extends StatelessWidget {
                         controller: password,
                       ),
                       const SizedBox(height: 30),
+                      // Botão de login
                       TextButton(
                         onPressed: () async {
+                          // Envia uma requisição POST para a API de login
                           var response = await ApiRequest.post(
                               endpoint: "auth/login",
                               body: {
-                                "email": email.text,
-                                "password": password.text,
-                                "role": role,
+                                "email": email.text, // Captura o email digitado
+                                "password": password.text, // Captura a senha digitada
+                                "role": role, // Envia a role "ADMIN" como padrão
                               });
+
+                          // Verifica se a resposta da API não foi bem-sucedida (código diferente de 200)
                           if (response.statusCode != 200) {
-                            Fluttertoast.showToast(
-                                msg: "Não foi possível entrar na conta");
+                            Fluttertoast.showToast(msg: "Não foi possível entrar na conta");
                             return;
                           }
-                          var tokenHandler =
-                              LoginToken.fromJson(jsonDecode(response.body));
+
+                          // Converte a resposta JSON da API em um objeto LoginToken
+                          var tokenHandler = LoginToken.fromJson(jsonDecode(response.body));
+
+                          // Define o token recebido para autenticar futuras requisições
                           ApiRequest.setToken(tokenHandler.token);
-                          Fluttertoast.showToast(msg: "login realizado");
+
+                          // Exibe um aviso de sucesso para o usuário
+                          Fluttertoast.showToast(msg: "Login realizado");
+
+                          // Navega para a tela "/home" e remove a tela de login do histórico
                           Navigator.pushReplacementNamed(context, "/home");
                         },
                         style: const ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.black),
-                            minimumSize:
-                                MaterialStatePropertyAll(Size(600, 60))),
+                            backgroundColor: MaterialStatePropertyAll(Colors.black),
+                            minimumSize: MaterialStatePropertyAll(Size(600, 60))),
                         child: const Text('Entrar',
                             style: TextStyle(
                               color: Colors.white,
                             )),
                       ),
                       const SizedBox(height: 20),
+                      // Botão de registro
                       TextButton(
                         onPressed: () {
+                          // Redireciona para a tela de registro
                           Navigator.pushNamed(context, "/register");
                         },
                         style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll(
                                 Color.fromARGB(255, 34, 75, 152)),
-                            minimumSize:
-                                MaterialStatePropertyAll(Size(600, 60))),
+                            minimumSize: MaterialStatePropertyAll(Size(600, 60))),
                         child: const Text('Registrar-se',
                             style: TextStyle(
                               color: Colors.white,
