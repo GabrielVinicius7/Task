@@ -1,16 +1,14 @@
-# erpecommerce
+# Task
 
-A new Flutter project.
+A Flutter application to manage tasks efficiently and effectively.
 
-## Getting Started
+## Overview
 
-This project is a starting point for a Flutter application.
+Task is a Flutter application designed to help you manage your daily tasks with ease. Whether you're organizing your work, personal projects, or anything in between, Task provides a user-friendly interface to keep everything on track.
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Task Management: Create, update, and delete tasks.
+- Categorization: Organize tasks into categories.
+- Reminders: Set reminders for important tasks.
+- Cross-Platform: Available on both iOS and Android.
