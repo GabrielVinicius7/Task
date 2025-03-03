@@ -1,6 +1,6 @@
-# Task
+# Task  <img src="https://img.icons8.com/badges/512/flutter.png" alt="Logo do Flutter " width="40" height="40" />  <img src="https://img.icons8.com/ios7/600/FFFFFF/dart-language.png" alt="Logo do Flutter " width="40" height="40" />     
 
-A Flutter application to manage tasks efficiently and effectively.   ![Logo do GitHub](https://w7.pngwing.com/pngs/537/866/png-transparent-flutter-hd-logo.png)
+A Flutter application to manage tasks efficiently and effectively. 
 
 ## Overview
 
