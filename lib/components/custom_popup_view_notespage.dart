@@ -61,17 +61,17 @@ class CallHistoryPopup extends StatelessWidget {
                 ],
               ),
               const SizedBox(width: 50),
-              const Column(
+              Column(
                 children: [
-                  Text(
+                  const Text(
                     'Data',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text('Valor Data'),
+                  const SizedBox(height: 10),
+                  Text(call.date.showDateFormatted()),
                 ],
               ),
             ],

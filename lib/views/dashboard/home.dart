@@ -68,6 +68,7 @@ class _HomeState extends State<Home> {
       drawer: customdrawer(context), // Menu lateral
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: true,
         title: const Text(
           'Histórico de Ligações',
           style: TextStyle(color: Colors.black),

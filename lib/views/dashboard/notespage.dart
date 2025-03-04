@@ -72,6 +72,7 @@ class _HomeState extends State<NotesPage> {
     return Scaffold(
       drawer: customdrawer(context), // Menu lateral
       appBar: AppBar(
+        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Anotações',

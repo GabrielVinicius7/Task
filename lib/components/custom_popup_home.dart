@@ -5,7 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart'; // Importa a biblioteca para ex
 
 // CustomDialog é um modal (caixa de diálogo) que permite cadastrar ou editar um chamado (Call).
 class CustomDialog extends StatelessWidget {
-  final Call? call; // Variável que pode conter um chamado já existente ou ser nula (novo chamado)
+  final Call?
+      call; // Variável que pode conter um chamado já existente ou ser nula (novo chamado)
 
   // Construtor da classe. Recebe um contexto (que representa a tela atual) e, opcionalmente, um chamado existente.
   const CustomDialog(BuildContext context, {super.key, this.call});
@@ -17,15 +18,11 @@ class CustomDialog extends StatelessWidget {
     var problema = TextEditingController();
     var solucao = TextEditingController();
 
-
     // Se um chamado já existir, preenche os campos com os dados dele.
-    empresa.text =
-        call?.company ?? ""; // Se call for nulo, mantém o campo vazio.
+    empresa.text =call?.company ?? ""; // Se call for nulo, mantém o campo vazio.
     nome.text = call?.name ?? "";
-    problema.text = call?.problem ??
-        ""; // Provavelmente um erro aqui: deveria ser call?.problem
-    solucao.text = call?.problem ??
-        ""; // Provavelmente um erro aqui: deveria ser call?.solution
+    problema.text = call?.problem ?? ""; // Provavelmente um erro aqui: deveria ser call?.problem
+    solucao.text = call?.solution ?? ""; // Provavelmente um erro aqui: deveria ser call?.solution
 
     return AlertDialog(
       // Exibe um popup na tela.
@@ -71,8 +68,22 @@ class CustomDialog extends StatelessWidget {
           children: [
             // Botão para cancelar e fechar a janela.
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Fecha o popup
+              onPressed: () async {
+                if (call != null) {
+                  var response = await ApiRequest.delete(
+                    endpoint: "api/call/${call!.id}",
+                    context: context,
+                  );
+
+                  if (response.statusCode == 200) {
+                    Navigator.of(context).pop();
+                    Fluttertoast.showToast(msg: "Deletado com sucesso");
+                  } else {
+                    Fluttertoast.showToast(msg: "Erro ao deletar");
+                  }
+                } else {
+                  Navigator.of(context).pop();
+                } // Fecha o popup
               },
               child: Icon(
                 call == null ? Icons.close : Icons.delete,

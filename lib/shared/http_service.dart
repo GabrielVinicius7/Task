@@ -6,11 +6,12 @@ import 'package:http/http.dart'
 // Classe responsável por gerenciar requisições HTTP na aplicação
 class ApiRequest {
   static const String host = "http://10.0.0.4:8080/"; // URL base da API
-  static String _token = ""; // Armazena o token de autenticação para requisições
+  static String _token =
+      ""; // Armazena o token de autenticação para requisições
 
   // Método para definir um novo token de autenticação
-  static void setToken(String newToke) {
-    _token = newToke;
+  static void setToken(String newToken) {
+    _token = newToken;
   }
 
   // Método para realizar uma requisição GET a um endpoint específico
@@ -36,7 +37,8 @@ class ApiRequest {
         body: jsonEncode(body));
     if (context != null) {
       if (response.statusCode == 403 || response.statusCode == 401) {
-        Navigator.pushNamed(context, "/login"); // Redireciona o usuário para a tela de login
+        Navigator.pushNamed(
+            context, "/login"); // Redireciona o usuário para a tela de login
       }
       return response;
     }
@@ -60,6 +62,31 @@ class ApiRequest {
             'application/json', // Define o tipo de conteúdo como JSON
       },
       body: jsonEncode(body), // Converte o corpo da requisição para JSON
+    );
+
+    // Se um contexto for fornecido e a resposta indicar erro de autenticação, redireciona para a tela de login
+    if (context != null) {
+      if (response.statusCode == 403 || response.statusCode == 401) {
+        Navigator.pushNamed(context, "/login"); // Redireciona o usuário para a tela de login
+      }
+      return response;
+    }
+    return response; // Retorna a resposta HTTP
+  }
+
+  // Método para realizar uma requisição DELETE
+  static Future<http.Response> delete(
+      {required String endpoint, BuildContext? context}) async {
+    var httpUrl =
+        Uri.parse(host + endpoint); // Cria a URL completa da requisição
+
+    var response = await http.delete(
+      httpUrl,
+      headers: {
+        'Authorization': 'Bearer $_token', // Autenticação com o token
+        'Content-Type':
+            'application/json', // Define o tipo de conteúdo como JSON
+      },
     );
 
     // Se um contexto for fornecido e a resposta indicar erro de autenticação, redireciona para a tela de login
