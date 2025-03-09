@@ -5,18 +5,20 @@ import 'package:erpecommerce/components/custom_popup_view_notespage.dart';
 import 'package:erpecommerce/shared/http_service.dart';
 import 'package:erpecommerce/views/dashboard/entities/note.dart';
 import 'package:flutter/material.dart';
+import 'package:erpecommerce/components/custom_searchscreen_notespage.dart';
 
 // Tela principal do aplicativo
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
 
   @override
-  State<NotesPage> createState() => _HomeState();
+  State<NotesPage> createState() => _NotesState();
 }
 
-class _HomeState extends State<NotesPage> {
+class _NotesState extends State<NotesPage> {
   List<Call> _calls =
       []; // Lista para armazenar as chamadas recuperadas do servidor
+  List<Call> _filteredCalls = []; // Lista para armazenar as chamadas filtradas
   bool _isLoading = true; // Indica se os dados ainda estão sendo carregados
   String?
       _errorMessage; // Armazena mensagens de erro em caso de falha na requisição
@@ -47,6 +49,8 @@ class _HomeState extends State<NotesPage> {
         if (!mounted) return;
         setState(() {
           _calls = calls;
+          _filteredCalls =
+              calls; // Inicialmente, todas as chamadas são exibidas
           _isLoading = false;
         });
       } else {
@@ -67,10 +71,30 @@ class _HomeState extends State<NotesPage> {
     }
   }
 
+  String normalizeText(String text) {
+    return text.toLowerCase().trim();
+  }
+
+  void filterCalls(String query) {
+    String normalizedQuery = normalizeText(query);
+
+    if (!mounted) return;
+
+    setState(() {
+      _filteredCalls = _calls.where((call) {
+        String normalizedTitle = normalizeText(call.title);
+        String normalizedCompany = normalizeText(call.company);
+
+        return normalizedTitle.contains(normalizedQuery) ||
+            normalizedCompany.contains(normalizedQuery);
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: customdrawer(context), // Menu lateral
+      drawer: MyDrawer(context,context: context), // Menu lateral
       appBar: AppBar(
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -118,14 +142,24 @@ class _HomeState extends State<NotesPage> {
 
     return Stack(
       children: [
-        ListView.separated(
-          itemCount: _calls.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final call = _calls[index];
-            return _buildCallItem(call);
-          },
+        Column(
+          children: [
+            SearchScreenNotes(
+                onSearch: filterCalls), // Adiciona a barra de busca
+            Expanded(
+              child: ListView.separated(
+                itemCount: _filteredCalls.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final call = _filteredCalls[index];
+                  return _buildCallItem(call);
+                },
+              ),
+            )
+          ],
         ),
+
         _buildFloatingButton(), // Botão para adicionar nova chamada
       ],
     );

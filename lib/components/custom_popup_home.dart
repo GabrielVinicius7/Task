@@ -9,7 +9,7 @@ class CustomDialog extends StatelessWidget {
       call; // Variável que pode conter um chamado já existente ou ser nula (novo chamado)
 
   // Construtor da classe. Recebe um contexto (que representa a tela atual) e, opcionalmente, um chamado existente.
-  const CustomDialog(BuildContext context, {super.key, this.call});
+  const CustomDialog({super.key, this.call});
   @override
   Widget build(BuildContext context) {
     // Controladores para capturar os dados digitados nos campos de texto.
@@ -18,12 +18,13 @@ class CustomDialog extends StatelessWidget {
     var problema = TextEditingController();
     var solucao = TextEditingController();
 
-    // Se um chamado já existir, preenche os campos com os dados dele.
-    empresa.text =call?.company ?? ""; // Se call for nulo, mantém o campo vazio.
-    nome.text = call?.name ?? "";
-    problema.text = call?.problem ?? ""; // Provavelmente um erro aqui: deveria ser call?.problem
-    solucao.text = call?.solution ?? ""; // Provavelmente um erro aqui: deveria ser call?.solution
-
+    if (call != null) {
+      // Se um chamado já existir, preenche os controladores com os dados desse chamado.
+      empresa.text = call!.company;
+      nome.text = call!.name;
+      problema.text = call!.problem;
+      solucao.text = call!.solution;
+    }
     return AlertDialog(
       // Exibe um popup na tela.
       content: SingleChildScrollView(
@@ -100,43 +101,36 @@ class CustomDialog extends StatelessWidget {
                   "name": nome.text, // Envia o nome digitado
                   "company": empresa.text, // Envia a empresa digitada
                 };
-                //Checa se a call existe, e caso não exista, faz um Post(cria), caso exista, faz um Put(update)
-                if (call == null) {
-                  var response = await ApiRequest.post(
-                      endpoint: "api/call", body: callBody, context: context);
-                  if (response.statusCode == 201) {
-                    Navigator.of(context).pop(); // Fecha o popup após sucesso
-
-                    Fluttertoast.showToast(
-                        msg: "Cadastrado."); // Mostra um aviso de sucesso
-                    return;
-                  }
+                 var response = call == null
+                    // ignore: use_build_context_synchronously
+                    ? await ApiRequest.post(
+                        endpoint: "api/call",
+                        body: callBody,
+                        context: context,
+                      )
+                    // ignore: use_build_context_synchronously
+                    : await ApiRequest.put(
+                        endpoint: "api/call/${call!.id}",
+                        body: callBody,
+                        context: context,
+                      );
+                if (response.statusCode == 200 || response.statusCode == 201) {
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(context).pop();
                   Fluttertoast.showToast(
-                      msg: "Não foi possivel cadastrar"); // Mostra um aviso
-                } else {
-                  var response = await ApiRequest.put(
-                      endpoint: "api/call/${call!.id}",
-                      body: callBody,
-                      context: context);
-                  if (response.statusCode == 200) {
-                    Navigator.of(context).pop(); // Fecha o popup após sucesso
-
-                    Fluttertoast.showToast(
-                        msg: "Alterado."); // Mostra um aviso de sucesso
-                    return;
-                  }
-                  Fluttertoast.showToast(
-                      msg: "Não foi possivel cadastrar"); // Mostra um aviso
+                      msg: call == null ? "Cadastrado" : "Atualizado");
+                  return;
+                  
                 }
-                // Faz uma requisição POST ou PUT (edição) para a API
+                Fluttertoast.showToast(msg: "Não foi possível cadastrar");
               },
               child: const Icon(
-                Icons.check, // Ícone de "✓"
+                Icons.check,
                 color: Colors.green,
               ),
             ),
           ],
-        )
+        ),
       ],
     );
   }

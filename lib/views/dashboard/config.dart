@@ -50,7 +50,7 @@ class _ConfigState extends State<Config> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: customdrawer(context),
+      drawer: MyDrawer(context,context: context),
       appBar: AppBar(
         iconTheme: const IconThemeData(
           color: Colors.black,

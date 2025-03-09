@@ -12,7 +12,6 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     var email = TextEditingController();
     var password = TextEditingController();
-    var role = "ADMIN";
     return Scaffold(
         appBar: AppBar(),
         body: SingleChildScrollView(
@@ -58,7 +57,7 @@ class Login extends StatelessWidget {
                         obscureText: true,
                         controller: password,
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 50),
                       // Botão de login
                       TextButton(
                         onPressed: () async {
@@ -68,17 +67,18 @@ class Login extends StatelessWidget {
                               body: {
                                 "email": email.text, // Captura o email digitado
                                 "password": password.text, // Captura a senha digitada
-                                "role": role, // Envia a role "ADMIN" como padrão
                               });
 
                           // Verifica se a resposta da API não foi bem-sucedida (código diferente de 200)
                           if (response.statusCode != 200) {
-                            Fluttertoast.showToast(msg: "Não foi possível entrar na conta");
+                            Fluttertoast.showToast(
+                                msg: "Não foi possível entrar na conta");
                             return;
                           }
 
                           // Converte a resposta JSON da API em um objeto LoginToken
-                          var tokenHandler = LoginToken.fromJson(jsonDecode(response.body));
+                          var tokenHandler =
+                              LoginToken.fromJson(jsonDecode(response.body));
 
                           // Define o token recebido para autenticar futuras requisições
                           ApiRequest.setToken(tokenHandler.token);
@@ -90,29 +90,16 @@ class Login extends StatelessWidget {
                           Navigator.pushReplacementNamed(context, "/home");
                         },
                         style: const ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(Colors.black),
-                            minimumSize: MaterialStatePropertyAll(Size(600, 60))),
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.black),
+                            minimumSize:
+                                MaterialStatePropertyAll(Size(600, 60))),
                         child: const Text('Entrar',
                             style: TextStyle(
                               color: Colors.white,
                             )),
                       ),
-                      const SizedBox(height: 20),
-                      // Botão de registro
-                      TextButton(
-                        onPressed: () {
-                          // Redireciona para a tela de registro
-                          Navigator.pushNamed(context, "/register");
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(
-                                Color.fromARGB(255, 34, 75, 152)),
-                            minimumSize: MaterialStatePropertyAll(Size(600, 60))),
-                        child: const Text('Registrar-se',
-                            style: TextStyle(
-                              color: Colors.white,
-                            )),
-                      ),
+                      const SizedBox(height: 20)
                     ])),
               ],
             ),

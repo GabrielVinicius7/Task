@@ -14,6 +14,9 @@ class ApiRequest {
     _token = newToken;
   }
 
+  // Método para obter o token de autenticação atual
+  static String get token => _token;
+
   // Método para realizar uma requisição GET a um endpoint específico
   static Future<http.Response> get({required String endpoint}) async {
     return await http.get(Uri.parse("$host$endpoint"), headers: {
@@ -67,7 +70,8 @@ class ApiRequest {
     // Se um contexto for fornecido e a resposta indicar erro de autenticação, redireciona para a tela de login
     if (context != null) {
       if (response.statusCode == 403 || response.statusCode == 401) {
-        Navigator.pushNamed(context, "/login"); // Redireciona o usuário para a tela de login
+        Navigator.pushNamed(
+            context, "/login"); // Redireciona o usuário para a tela de login
       }
       return response;
     }

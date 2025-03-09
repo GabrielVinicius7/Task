@@ -5,6 +5,7 @@ import 'package:erpecommerce/components/custom_popup_view_home.dart';
 import 'package:erpecommerce/shared/http_service.dart';
 import 'package:erpecommerce/views/dashboard/entities/call.dart';
 import 'package:flutter/material.dart';
+import 'package:erpecommerce/components/custom_searchscreen_home.dart';
 
 // Tela principal do aplicativo
 class Home extends StatefulWidget {
@@ -15,9 +16,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Call> _calls = []; // Lista para armazenar as chamadas recuperadas do servidor
+  List<Call> _calls =
+      []; // Lista para armazenar as chamadas recuperadas do servidor
+  List<Call> _filteredCalls = []; // Lista para armazenar as chamadas filtradas
   bool _isLoading = true; // Indica se os dados ainda estão sendo carregados
-  String? _errorMessage; // Armazena mensagens de erro em caso de falha na requisição
+  String?
+      _errorMessage; // Armazena mensagens de erro em caso de falha na requisição
 
   @override
   void initState() {
@@ -28,20 +32,25 @@ class _HomeState extends State<Home> {
   // Método responsável por buscar as chamadas no servidor
   Future<void> _fetchCalls() async {
     try {
-      var response = await ApiRequest.get(endpoint: "api/call"); // Faz requisição GET para obter os dados
+      var response = await ApiRequest.get(
+          endpoint: "api/call"); // Faz requisição GET para obter os dados
       print("Resposta do servidor: ${response.body}");
 
       if (!mounted) return;
 
       if (response.statusCode == 200) {
         // Decodifica a resposta para lidar com caracteres especiais
-        String decodedBody = utf8.decode(response.bodyBytes, allowMalformed: true);
+        String decodedBody =
+            utf8.decode(response.bodyBytes, allowMalformed: true);
         final List<dynamic> jsonList = jsonDecode(decodedBody);
-        final List<Call> calls = jsonList.map((json) => Call.fromJson(json)).toList();
+        final List<Call> calls =
+            jsonList.map((json) => Call.fromJson(json)).toList();
 
         if (!mounted) return;
         setState(() {
           _calls = calls;
+          _filteredCalls =
+              calls; // Inicialmente, todas as chamadas são exibidas
           _isLoading = false;
         });
       } else {
@@ -62,10 +71,35 @@ class _HomeState extends State<Home> {
     }
   }
 
+  // Função para normalizar o texto (remover espaços em branco e converter para minúsculas)
+  String normalizeText(String text) {
+    return text.toLowerCase().trim();
+  }
+
+  // Função para filtrar as chamadas com base na consulta de busca
+  void filterCalls(String query) {
+    String normalizedQuery = normalizeText(query);
+
+    // Verifica se o widget ainda está montado antes de chamar setState
+    if (!mounted) return;
+
+    // Filtra as chamadas com base na consulta
+    setState(() {
+      _filteredCalls = _calls.where((call) {
+        String normalizedName = normalizeText(call.name);
+        String normalizedCompany = normalizeText(call.company);
+
+        // Retorna true se o nome ou a empresa contiverem a consulta
+        return normalizedName.contains(normalizedQuery) ||
+            normalizedCompany.contains(normalizedQuery);
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: customdrawer(context), // Menu lateral
+      drawer: MyDrawer(context,context: context), // Menu lateral
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         centerTitle: true,
@@ -84,7 +118,8 @@ class _HomeState extends State<Home> {
     if (_isLoading) {
       return Stack(
         children: [
-          Center(child: CircularProgressIndicator()), // Indicador de carregamento
+          Center(
+              child: CircularProgressIndicator()), // Indicador de carregamento
           _buildFloatingButton(), // Botão para adicionar nova chamada
         ],
       );
@@ -102,7 +137,9 @@ class _HomeState extends State<Home> {
     if (_calls.isEmpty) {
       return Stack(
         children: [
-          const Center(child: Text('Nenhuma ligação registrada')), // Mensagem caso não haja chamadas
+          const Center(
+              child: Text(
+                  'Nenhuma ligação registrada')), // Mensagem caso não haja chamadas
           _buildFloatingButton(), // Botão para adicionar nova chamada
         ],
       );
@@ -110,13 +147,21 @@ class _HomeState extends State<Home> {
 
     return Stack(
       children: [
-        ListView.separated(
-          itemCount: _calls.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final call = _calls[index];
-            return _buildCallItem(call);
-          },
+        Column(
+          children: [
+            SearchScreen(onSearch: filterCalls), // Adiciona a barra de busca
+            Expanded(
+              child: ListView.separated(
+                itemCount: _filteredCalls.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final call = _filteredCalls[index];
+                  return _buildCallItem(call);
+                },
+              ),
+            ),
+          ],
         ),
         _buildFloatingButton(), // Botão para adicionar nova chamada
       ],
@@ -133,7 +178,7 @@ class _HomeState extends State<Home> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (_) => CustomDialog(context),
+            builder: (_) => const CustomDialog(),
           ).then((_) => _fetchCalls()); // Atualiza a lista após o cadastro
         },
         child: const Icon(Icons.add, color: Colors.white),
@@ -146,7 +191,8 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: () => showDialog(
         context: context,
-        builder: (_) => CallHistoryPopup(call: call), // Exibe detalhes da chamada ao tocar
+        builder: (_) =>
+            CallHistoryPopup(call: call), // Exibe detalhes da chamada ao tocar
       ),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 7),
@@ -174,8 +220,10 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("${call.company} / ${call.name}", style: const TextStyle(fontSize: 16)),
-                  Text(call.date.showDateFormatted(), style: const TextStyle(fontSize: 16)),
+                  Text("${call.company} / ${call.name}",
+                      style: const TextStyle(fontSize: 16)),
+                  Text(call.date.showDateFormatted(),
+                      style: const TextStyle(fontSize: 16)),
                 ],
               ),
               const Spacer(),
@@ -185,7 +233,9 @@ class _HomeState extends State<Home> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(call.problem, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
+                        Text(call.problem,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 16)),
                         Text(call.solution, overflow: TextOverflow.ellipsis),
                       ],
                     ),
@@ -194,7 +244,7 @@ class _HomeState extends State<Home> {
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () => showDialog(
                       context: context,
-                      builder: (_) => CustomDialog(context, call: call),
+                      builder: (_) => CustomDialog(call: call),
                     ).then((_) => _fetchCalls()),
                   ),
                 ],
