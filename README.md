@@ -4,11 +4,11 @@ A Flutter application to manage tasks efficiently and effectively.
 
 ## Overview
 
-Task is a Flutter application designed to help you manage your daily tasks with ease. Whether you're organizing your work, personal projects, or anything in between, Task provides a user-friendly interface to keep everything on track.
+Task is a Flutter application built to simplify daily task management. It helps me and my friend stay organized and productive at work.
+
 
 ## Features
 
-- Task Management: Create, update, and delete tasks.
-- Categorization: Organize tasks into categories.
-- Reminders: Set reminders for important tasks.
+- Notes Management: Create, update, and delete tasks.
+- Call Management: Create, update, and delete tasks.
 - Cross-Platform: Available on both iOS and Android.
