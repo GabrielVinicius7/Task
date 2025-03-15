@@ -1,11 +1,10 @@
-# Task  <img src="https://img.icons8.com/badges/512/flutter.png" alt="Logo do Flutter " width="40" height="40" />  <img src="https://img.icons8.com/ios7/600/FFFFFF/dart-language.png" alt="Logo do Flutter " width="40" height="40" />     
+# task <img src="https://img.icons8.com/badges/512/flutter.png" alt="Logo do Flutter " width="40" height="40" /> <img src="https://img.icons8.com/ios7/600/FFFFFF/dart-language.png" alt="Logo do Flutter " width="40" height="40" />
 
-A Flutter application to manage tasks efficiently and effectively. 
+A Flutter application to manage tasks efficiently and effectively.
 
 ## Overview
 
-Task is a Flutter application built to simplify daily task management. It helps me and my friend stay organized and productive at work.
-
+task is a Flutter application built to simplify daily task management. It helps me and my friend stay organized and productive at work.
 
 ## Features
 

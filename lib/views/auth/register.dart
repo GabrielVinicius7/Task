@@ -1,4 +1,4 @@
-import 'package:erpecommerce/shared/http_service.dart';
+import 'package:task/shared/http_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -51,7 +51,7 @@ class _RegisterState extends State<Register> {
                     // Campo de entrada para o nome de usuário
                     TextField(
                       decoration: const InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'Nome',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.person),
                       ),
@@ -73,7 +73,7 @@ class _RegisterState extends State<Register> {
                       child: DropdownButtonFormField<String>(
                         value: role,
                         decoration: const InputDecoration(
-                          labelText: 'Role',
+                          labelText: 'Cargo',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person_add_alt_1),
                         ),
@@ -100,7 +100,7 @@ class _RegisterState extends State<Register> {
                     // Campo de entrada para a senha
                     TextField(
                       decoration: const InputDecoration(
-                        labelText: 'Password',
+                        labelText: 'Senha',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.password),
                       ),
@@ -111,7 +111,7 @@ class _RegisterState extends State<Register> {
                     // Campo de entrada para repetir a senha
                     TextField(
                       decoration: const InputDecoration(
-                        labelText: 'Repeat the Password',
+                        labelText: 'Confirmar Senha',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.password),
                       ),

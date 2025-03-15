@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:erpecommerce/components/custom_drawer.dart';
-import 'package:erpecommerce/components/custom_popup_notespage.dart';
-import 'package:erpecommerce/components/custom_popup_view_notespage.dart';
-import 'package:erpecommerce/shared/http_service.dart';
-import 'package:erpecommerce/views/dashboard/entities/note.dart';
+import 'package:task/components/custom_drawer.dart';
+import 'package:task/components/custom_popup_notespage.dart';
+import 'package:task/components/custom_popup_view_notespage.dart';
+import 'package:task/shared/http_service.dart';
+import 'package:task/views/dashboard/entities/note.dart';
 import 'package:flutter/material.dart';
-import 'package:erpecommerce/components/custom_searchscreen_notespage.dart';
+import 'package:task/components/custom_searchscreen_notespage.dart';
 
 // Tela principal do aplicativo
 class NotesPage extends StatefulWidget {
@@ -75,6 +75,22 @@ class _NotesState extends State<NotesPage> {
     return text.toLowerCase().trim();
   }
 
+  String maximumLength(String text) {
+    if (text.length > 10) {
+      return text.substring(0, 10) + "...";
+    } else {
+      return text;
+    }
+  }
+
+  String maximumTextLength(String text) {
+    if (text.length > 30) {
+      return text.substring(0, 30) + "...";
+    } else {
+      return text;
+    }
+  }
+
   void filterCalls(String query) {
     String normalizedQuery = normalizeText(query);
 
@@ -94,7 +110,7 @@ class _NotesState extends State<NotesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(context,context: context), // Menu lateral
+      drawer: MyDrawer(context, context: context), // Menu lateral
       appBar: AppBar(
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -218,7 +234,8 @@ class _NotesState extends State<NotesPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("${call.title} / ${call.company}",
+                  Text(
+                      "${maximumLength(call.title)} / ${maximumLength(call.company)}",
                       style: const TextStyle(fontSize: 16)),
                   Text(call.date.showDateFormatted(),
                       style: const TextStyle(fontSize: 16)),
@@ -231,10 +248,11 @@ class _NotesState extends State<NotesPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(call.contact,
+                        Text(maximumTextLength(call.contact),
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontSize: 16)),
-                        Text(call.situation, overflow: TextOverflow.ellipsis),
+                        Text(maximumTextLength(call.situation),
+                            overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),

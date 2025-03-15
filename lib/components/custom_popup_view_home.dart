@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:erpecommerce/views/dashboard/entities/call.dart';
+import 'package:task/views/dashboard/entities/call.dart';
 
 class CallHistoryPopup extends StatelessWidget {
   final Call call;
@@ -13,11 +13,11 @@ class CallHistoryPopup extends StatelessWidget {
               CrossAxisAlignment.center, // Alinha os itens ao centro
           children: [
             const Text(
-              'Empresa/Atendeu',
+              'Empresa',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text("${call.company}  /  ${call.name}"),
+            Text(call.company),
             const SizedBox(height: 25),
             const Text(
               'Contato',

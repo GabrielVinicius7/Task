@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:erpecommerce/components/custom_drawer.dart';
-import 'package:erpecommerce/components/custom_popup_home.dart';
-import 'package:erpecommerce/components/custom_popup_view_home.dart';
-import 'package:erpecommerce/shared/http_service.dart';
-import 'package:erpecommerce/views/dashboard/entities/call.dart';
+import 'package:task/components/custom_drawer.dart';
+import 'package:task/components/custom_popup_home.dart';
+import 'package:task/components/custom_popup_view_home.dart';
+import 'package:task/shared/http_service.dart';
+import 'package:task/views/dashboard/entities/call.dart';
 import 'package:flutter/material.dart';
-import 'package:erpecommerce/components/custom_searchscreen_home.dart';
+import 'package:task/components/custom_searchscreen_home.dart';
 
 // Tela principal do aplicativo
 class Home extends StatefulWidget {
@@ -76,6 +76,22 @@ class _HomeState extends State<Home> {
     return text.toLowerCase().trim();
   }
 
+  String maximumLength(String text) {
+    if (text.length > 10) {
+      return text.substring(0, 10) + "...";
+    } else {
+      return text;
+    }
+  }
+
+   String maximumTextLength(String text) {
+    if (text.length > 30) {
+      return text.substring(0, 30) + "...";
+    } else {
+      return text;
+    }
+  }
+
   // Função para filtrar as chamadas com base na consulta de busca
   void filterCalls(String query) {
     String normalizedQuery = normalizeText(query);
@@ -99,7 +115,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(context,context: context), // Menu lateral
+      drawer: MyDrawer(context, context: context), // Menu lateral
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         centerTitle: true,
@@ -220,7 +236,7 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("${call.company} / ${call.name}",
+                  Text("${maximumLength(call.company)} / ${maximumLength(call.name)}",
                       style: const TextStyle(fontSize: 16)),
                   Text(call.date.showDateFormatted(),
                       style: const TextStyle(fontSize: 16)),
@@ -233,10 +249,10 @@ class _HomeState extends State<Home> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(call.problem,
+                        Text(maximumTextLength(call.problem),
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontSize: 16)),
-                        Text(call.solution, overflow: TextOverflow.ellipsis),
+                        Text(maximumTextLength(call.solution), overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),

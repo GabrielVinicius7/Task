@@ -1,4 +1,4 @@
-import 'package:erpecommerce/shared/http_service.dart';
+import 'package:task/shared/http_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -44,7 +44,7 @@ class CustomDialog extends StatelessWidget {
                     endpoint: "auth/password",
                     body: {"password": senhaNova.text},
                   );
-               
+
                   if (response.statusCode != 202) {
                     Fluttertoast.showToast(
                         msg: "Não foi possível alterar a senha");

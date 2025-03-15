@@ -1,5 +1,5 @@
-import 'package:erpecommerce/shared/http_service.dart';
-import 'package:erpecommerce/views/dashboard/entities/note.dart';
+import 'package:task/shared/http_service.dart';
+import 'package:task/views/dashboard/entities/note.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -33,7 +33,6 @@ class CustomDialogNotes extends StatelessWidget {
                 labelText: 'Título',
               ),
               controller: titulo,
-              maxLength: 15, // Define o limite de caracteres
             ),
             TextField(
               decoration: const InputDecoration(
@@ -111,7 +110,6 @@ class CustomDialogNotes extends StatelessWidget {
                   Fluttertoast.showToast(
                       msg: call == null ? "Cadastrado" : "Atualizado");
                   return;
-                  
                 }
                 Fluttertoast.showToast(msg: "Não foi possível cadastrar");
               },

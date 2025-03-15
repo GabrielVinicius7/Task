@@ -1,5 +1,5 @@
-import 'package:erpecommerce/shared/http_service.dart'; // Importa a classe responsável por fazer requisições HTTP
-import 'package:erpecommerce/views/dashboard/entities/call.dart'; // Importa a entidade Call, que representa um chamado
+import 'package:task/shared/http_service.dart'; // Importa a classe responsável por fazer requisições HTTP
+import 'package:task/views/dashboard/entities/call.dart'; // Importa a entidade Call, que representa um chamado
 import 'package:flutter/material.dart'; // Importa os componentes visuais do Flutter
 import 'package:fluttertoast/fluttertoast.dart'; // Importa a biblioteca para exibir notificações do tipo Toast
 
@@ -101,7 +101,7 @@ class CustomDialog extends StatelessWidget {
                   "name": nome.text, // Envia o nome digitado
                   "company": empresa.text, // Envia a empresa digitada
                 };
-                 var response = call == null
+                var response = call == null
                     // ignore: use_build_context_synchronously
                     ? await ApiRequest.post(
                         endpoint: "api/call",
@@ -120,7 +120,6 @@ class CustomDialog extends StatelessWidget {
                   Fluttertoast.showToast(
                       msg: call == null ? "Cadastrado" : "Atualizado");
                   return;
-                  
                 }
                 Fluttertoast.showToast(msg: "Não foi possível cadastrar");
               },

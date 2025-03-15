@@ -1,4 +1,4 @@
-import 'package:erpecommerce/views/dashboard/entities/note.dart';
+import 'package:task/views/dashboard/entities/note.dart';
 import 'package:flutter/material.dart';
 
 class CallHistoryPopup extends StatelessWidget {
@@ -42,11 +42,6 @@ class CallHistoryPopup extends StatelessWidget {
             call.situation,
           ),
           const SizedBox(height: 20),
-          Row(
-            children: [
-              const SizedBox(width: 25),
-              Column(
-                children: [
                   const Text(
                     'Contato',
                     style: TextStyle(
@@ -58,25 +53,16 @@ class CallHistoryPopup extends StatelessWidget {
                   Text(
                     call.contact,
                   ),
-                ],
-              ),
-              const SizedBox(width: 50),
-              Column(
-                children: [
-                  const Text(
-                    'Data',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(call.date.showDateFormatted()),
-                ],
-              ),
-            ],
+          const SizedBox(height: 20),
+          const Text(
+            'Data',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(width: 250),
+          const SizedBox(height: 10),
+          Text(call.date.showDateFormatted()),
         ]),
       ),
     );

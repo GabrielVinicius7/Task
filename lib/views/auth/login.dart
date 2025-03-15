@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:erpecommerce/shared/http_service.dart';
-import 'package:erpecommerce/views/auth/login_token.dart';
+import 'package:task/shared/http_service.dart';
+import 'package:task/views/auth/login_token.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -22,7 +22,7 @@ class Login extends StatelessWidget {
               children: [
                 Title(
                   color: Colors.black,
-                  child: const Text('Suporte',
+                  child: const Text('Task',
                       style: TextStyle(
                         fontSize: 50,
                         fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class Login extends StatelessWidget {
                       const SizedBox(height: 30.0),
                       TextField(
                         decoration: const InputDecoration(
-                          labelText: 'Password',
+                          labelText: 'Senha',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.password),
                         ),

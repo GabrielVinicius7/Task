@@ -5,7 +5,7 @@ import 'package:http/http.dart'
 
 // Classe responsável por gerenciar requisições HTTP na aplicação
 class ApiRequest {
-  static const String host = "http://10.0.0.4:8080/"; // URL base da API
+  static const String host = "http://192.168.3.25:8080/"; // URL base da API
   static String _token =
       ""; // Armazena o token de autenticação para requisições
 
